@@ -3,27 +3,26 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import toast from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
   const [user, setUser] = useState({
     email: "",
     password: "",
+    username: "",
   });
-
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const onLogin = async () => {
+  const onSignup = async () => {
     try {
       setLoading(true);
-      const response = await axios.post("/api/users/login", user);
-      console.log("Login success", response.data);
-      toast.success("Login success");
-      router.push("/generateEmail");
+      const response = await axios.post("/api/users/signup", user);
+      console.log("Signup success", response.data);
+      router.push("/login");
     } catch (error) {
-      console.log("Login failed", error.message);
+      console.log("Signup failed", error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);
@@ -31,7 +30,11 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
-    if (user.email.length > 0 && user.password.length > 0) {
+    if (
+      user.email.length > 0 &&
+      user.password.length > 0 &&
+      user.username.length > 0
+    ) {
       setButtonDisabled(false);
     } else {
       setButtonDisabled(true);
@@ -42,9 +45,27 @@ export default function LoginPage() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          {loading ? "Processing..." : "Log In to Your Account"}
+          {loading ? "Processing..." : "Create an Account"}
         </h1>
         <hr className="mb-6 border-gray-300" />
+
+        {/* Username Field */}
+        <div className="mb-6">
+          <label
+            htmlFor="username"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Username
+          </label>
+          <input
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-800"
+            id="username"
+            type="text"
+            value={user.username}
+            onChange={(e) => setUser({ ...user, username: e.target.value })}
+            placeholder="Enter your username"
+          />
+        </div>
 
         {/* Email Field */}
         <div className="mb-6">
@@ -82,9 +103,9 @@ export default function LoginPage() {
           />
         </div>
 
-        {/* Login Button */}
+        {/* Signup Button */}
         <button
-          onClick={onLogin}
+          onClick={onSignup}
           disabled={buttonDisabled || loading}
           className={`w-full py-2 px-4 rounded-lg font-semibold text-white transition-all ${
             buttonDisabled || loading
@@ -92,15 +113,15 @@ export default function LoginPage() {
               : "bg-blue-600 hover:bg-blue-700"
           }`}
         >
-          {loading ? "Logging in..." : "Log In"}
+          {loading ? "Signing up..." : "Sign Up"}
         </button>
 
-        {/* Signup Link */}
+        {/* Login Link */}
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-            Don't have an account?{" "}
-            <Link href="/signup" className="text-blue-600 hover:underline">
-              Sign up here
+            Already have an account?{" "}
+            <Link href="/login" className="text-blue-600 hover:underline">
+              Log in here
             </Link>
           </p>
         </div>
