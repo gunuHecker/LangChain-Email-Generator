@@ -6,7 +6,7 @@ export async function POST(request) {
     const { recipientName, emailPurpose, keyPoints } = await request.json();
 
     // Prompt for the Ollama model'
-    const prompt = `Write a professional email for the purpose of ${emailPurpose}. Recipient: ${recipientName}. Key points to include: ${keyPoints}.`;
+    const prompt = `Write a professional short email for the purpose of ${emailPurpose}. Recipient: ${recipientName}. Key points to include: ${keyPoints}.`;
 
     const response = await ollama.generate({
       model: "llama2",
