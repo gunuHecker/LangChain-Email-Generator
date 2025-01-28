@@ -11,7 +11,7 @@ export async function POST(request) {
   try {
     // Parse the request body
     const reqBody = await request.json();
-    const { username, email, password } = reqBody;
+    const { username, email, password} = reqBody;
 
     console.log(reqBody);
 
@@ -31,14 +31,14 @@ export async function POST(request) {
 
     // Create a new user
     const newUser = new User({
-      username,
-      email,
+      username: username,
+      email: email,
       password: hashedPassword,
     });
 
     // Save the user to the database
     const savedUser = await newUser.save();
-    console.log(savedUser);
+    console.log("Saved User: ", savedUser);
 
     // Return success response
     return NextResponse.json({

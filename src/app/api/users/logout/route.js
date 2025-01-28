@@ -7,7 +7,7 @@ export async function POST() {
       success: true,
     });
     response.cookies.set("token", "", { httpOnly: true, expires: new Date(0) });
-    response.cookies.set("user", "", { httpOnly: true, expires: new Date(0) });
+    response.cookies.set("userId", "", { httpOnly: true, expires: new Date(0) });
     return response;
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
