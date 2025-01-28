@@ -8,17 +8,7 @@ This is a [Next.js](https://nextjs.org) project that generates professional emai
 - Generate professional emails based on user input using AI.
 - Save generated emails to the database
 - Responsive design with Tailwind CSS
-
-# Email Generator
-
-This is a [Next.js](https://nextjs.org) project that generates professional emails using AI. The project is bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
-## Features
-
-- User authentication (signup, login, logout)
-- Generate professional emails based on user input using AI
-- Save generated emails to the database
-- Responsive design with Tailwind CSS
+- Utilizes Hugging Face Inference API with Qwen2.5-Coder-32B-Instruct for generating email content
 
 ## Getting Started
 
@@ -75,7 +65,7 @@ API Endpoints
 POST /api/users/signup: Create a new user.
 POST /api/users/login: Authenticate a user.
 POST /api/users/logout: Logout a user.
-POST /api/generate-email: Generate a professional email.
+POST /api/generate-email: Generate a professional email using Hugging Face Inference API with Qwen2.5-Coder-32B-Instruct.
 ```
 
 ## Learn More
