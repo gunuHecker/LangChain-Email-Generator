@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 
 export default function Home() {
@@ -31,15 +30,6 @@ export default function Home() {
             Log In
           </Link>
         </div>
-
-        {/* Optional: Add a small image or illustration */}
-        {/* <div className="mt-12">
-          <img
-            src="/images/ai-email.png" // Replace with your image path
-            alt="AI Email Generator"
-            className="w-64 mx-auto"
-          />
-        </div> */}
       </div>
     </div>
   );
