@@ -30,14 +30,25 @@ export async function POST(request) {
       max_tokens: 500,
     });
 
-    console.log(chatCompletion);
-
     if (
       chatCompletion &&
       chatCompletion.choices &&
       chatCompletion.choices.length > 0
     ) {
       const email = chatCompletion.choices[0].message.content;
+
+      // Create a new user
+      const newResponse = new Response({
+        userId: request.userId,
+        recipientName: recipientName,
+        purpose: emailPurpose,
+        keyPoints: keyPoints,
+        mail: email,
+      });
+
+      // Save the user to the database
+      const savedResponse = await newResponse.save();
+
       return NextResponse.json({ email });
     } else {
       throw new Error("Failed to generate email");
