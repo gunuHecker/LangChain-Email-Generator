@@ -1,8 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Email Generator
+
+This is a [Next.js](https://nextjs.org) project that generates professional emails using AI. The project is bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+## Features
+
+- User authentication (signup, login, logout)
+- Generate professional emails based on user input using AI
+- Save generated emails to the database
+- Responsive design with Tailwind CSS
 
 ## Getting Started
 
-First, run the development server:
+First, clone the repository:
+
+```bash
+git clone https://github.com/gunuHecker/LangChain-Email-Generator.git
+cd LangChain-Email-Generator
+```
+
+Install the dependencies:
+
+```bash
+npm install
+```
+
+Create a .env file in the root directory and add your environment variables:
+
+```
+MONGO_URI=your_mongodb_uri
+TOKEN_SECRET=your_jwt_secret
+HUGGING_FACE_API_KEY=your_hugging_face_api_key
+```
+
+Run the development server:
 
 ```bash
 npm run dev
@@ -16,9 +46,26 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+app: Contains the main application components and pages.
+components: Contains reusable React components.
+dbConfig: Contains the database configuration.
+models: Contains the Mongoose models.
+public: Contains static assets.
+.env: Environment variables.
+next.config.mjs: Next.js configuration.
+tailwind.config.mjs: Tailwind CSS configuration.
+postcss.config.mjs: PostCSS configuration.
+eslint.config.mjs: ESLint configuration.
+
+API Endpoints
+POST /api/users/signup: Create a new user.
+POST /api/users/login: Authenticate a user.
+POST /api/users/logout: Logout a user.
+POST /api/generate-email: Generate a professional email.
+```
 
 ## Learn More
 
