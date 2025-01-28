@@ -5,7 +5,7 @@ const responseSchema = new mongoose.Schema(
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "No user found"],
+      //required: [true, "No user found"],
     },
     recipientName: {
       type: String,
