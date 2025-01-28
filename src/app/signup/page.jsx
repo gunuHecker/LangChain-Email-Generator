@@ -3,6 +3,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -19,10 +20,21 @@ export default function SignupPage() {
       setLoading(true);
       const response = await axios.post("/api/users/signup", user);
       console.log("Signup success", response.data);
-      router.push("/login");
+
+      // Show success toast
+      toast.success("Signup successful! Redirecting to login...");
+
+      // Redirect to login page after a short delay
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000); // 2 seconds delay
     } catch (error) {
       console.log("Signup failed", error.message);
-      throw new Error("Signup failed");
+
+      // Show error toast
+      toast.error(
+        error.response?.data?.error || "Signup failed. Please try again."
+      );
     } finally {
       setLoading(false);
     }

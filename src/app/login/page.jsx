@@ -20,11 +20,37 @@ export default function LoginPage() {
       setLoading(true);
       const response = await axios.post("/api/users/login", user);
       console.log("Login success", response.data);
-      toast.success("Login success");
-      router.push("/generateEmail");
+
+      // Show success toast
+      toast.success("Login successful! Redirecting...", {
+        duration: 3000, // Display for 3 seconds
+        position: "top-center",
+        style: {
+          background: "#4CAF50",
+          color: "#FFFFFF",
+        },
+      });
+
+      // Redirect to the generateEmail page after a short delay
+      setTimeout(() => {
+        router.push("/generateEmail");
+      }, 3000); // 3 seconds delay
     } catch (error) {
       console.log("Login failed", error.message);
-      toast.error(error.message);
+
+      // Show error toast
+      toast.error(
+        error.response?.data?.error ||
+          "Login failed. Please check your credentials.",
+        {
+          duration: 4000, // Display for 4 seconds
+          position: "top-center", 
+          style: {
+            background: "#FF5252",
+            color: "#FFFFFF",
+          },
+        }
+      );
     } finally {
       setLoading(false);
     }

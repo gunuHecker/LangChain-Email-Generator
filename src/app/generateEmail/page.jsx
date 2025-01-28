@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import EmailForm from "@/components/EmailForm";
+import toast from "react-hot-toast";
 
 export default function GenerateEmail() {
   const [generatedEmail, setGeneratedEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [isLoading, setIsLoading] = useState(false); 
   const router = useRouter();
 
   const handleSubmit = async (formData) => {
@@ -21,11 +22,38 @@ export default function GenerateEmail() {
       if (response.ok) {
         const { email } = await response.json();
         setGeneratedEmail(email);
+        toast.success("Email generated successfully!", {
+          duration: 4000,
+          position: "top-center",
+          style: {
+            background: "#4CAF50",
+            color: "#FFFFFF",
+          },
+        });
       } else {
-        console.error("Failed to generate email");
+        const errorData = await response.json();
+        toast.error(
+          errorData.error || "Failed to generate email. Please try again.",
+          {
+            duration: 4000,
+            position: "top-center",
+            style: {
+              background: "#FF5252",
+              color: "#FFFFFF",
+            },
+          }
+        );
       }
     } catch (error) {
       console.error("Error:", error);
+      toast.error("An unexpected error occurred. Please try again.", {
+        duration: 4000,
+        position: "top-center",
+        style: {
+          background: "#FF5252",
+          color: "#FFFFFF",
+        },
+      });
     } finally {
       setIsLoading(false); // Stop loading
     }
@@ -33,11 +61,37 @@ export default function GenerateEmail() {
 
   const handleLogout = async () => {
     try {
-      // Optional: Add API call to handle server-side logout if needed
-      await fetch("/api/users/logout", { method: "POST" });
-      router.push("/");
+      const response = await fetch("/api/users/logout", { method: "POST" });
+      if (response.ok) {
+        toast.success("Logged out successfully!", {
+          duration: 3000,
+          position: "top-center",
+          style: {
+            background: "#4CAF50",
+            color: "#FFFFFF",
+          },
+        });
+        router.push("/");
+      } else {
+        toast.error("Failed to log out. Please try again.", {
+          duration: 4000,
+          position: "top-center",
+          style: {
+            background: "#FF5252",
+            color: "#FFFFFF",
+          },
+        });
+      }
     } catch (error) {
       console.error("Failed to log out", error);
+      toast.error("An unexpected error occurred. Please try again.", {
+        duration: 4000,
+        position: "top-center",
+        style: {
+          background: "#FF5252",
+          color: "#FFFFFF",
+        },
+      });
     }
   };
 

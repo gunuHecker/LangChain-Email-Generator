@@ -14,7 +14,7 @@ export async function POST(request) {
     const { recipientName, emailPurpose, keyPoints } = await request.json();
 
     // Access cookies safely using Next.js API
-    const userId = cookies().get("userId")?.value;
+    const userId = await cookies().get("userId")?.value;
 
     if (!userId) {
       console.error("User ID is missing in the request.");
