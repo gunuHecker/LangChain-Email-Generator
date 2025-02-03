@@ -18,7 +18,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex flex-col items-center justify-center p-8">
       <div className="max-w-4xl mx-auto text-center">
-        {/* Introduction Section */}
+
         <h1 className="text-5xl font-bold text-gray-800 mb-6">
           Welcome to AI Email Generator
         </h1>
@@ -29,7 +29,6 @@ export default function Home() {
           time and make a lasting impression with every email you send.
         </p>
 
-        {/* Call-to-Action Buttons */}
         <div className="flex justify-center space-x-4">
           <Link
             href="/signup"

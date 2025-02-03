@@ -21,9 +21,8 @@ export default function LoginPage() {
       const response = await axios.post("/api/users/login", user);
       console.log("Login success", response.data);
 
-      // Show success toast
       toast.success("Login successful! Redirecting...", {
-        duration: 3000, // Display for 3 seconds
+        duration: 3000,
         position: "top-center",
         style: {
           background: "#4CAF50",
@@ -34,16 +33,15 @@ export default function LoginPage() {
       // Redirect to the generateEmail page after a short delay
       setTimeout(() => {
         router.push("/generateEmail");
-      }, 3000); // 3 seconds delay
+      }, 3000);
     } catch (error) {
       console.log("Login failed", error.message);
 
-      // Show error toast
       toast.error(
         error.response?.data?.error ||
           "Login failed. Please check your credentials.",
         {
-          duration: 4000, // Display for 4 seconds
+          duration: 4000,
           position: "top-center", 
           style: {
             background: "#FF5252",

@@ -44,7 +44,7 @@ export async function POST(request) {
     // Define the prompt for Qwen2.5-Coder model
     const prompt = `Write a professional, polite, conckse, short email for the purpose of ${emailPurpose}. Recipient: ${recipientName}. Key points to include: ${keyPoints}. If I have not provided full name then consider my full name: ${fullname}. If contact information not provided consider my contact information: ${emailId}`;
 
-    // Call Hugging Face Inference API with Qwen2.5-Coder-32B-Instruct
+    // Calling Hugging Face Inference API with Qwen2.5-Coder-32B-Instruct
 
     const client = new HfInference(HUGGING_FACE_API_KEY);
     const chatCompletion = await client.chatCompletion({

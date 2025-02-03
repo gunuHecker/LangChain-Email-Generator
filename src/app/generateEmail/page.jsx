@@ -11,7 +11,7 @@ export default function GenerateEmail() {
   const router = useRouter();
 
   const handleSubmit = async (formData) => {
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
     try {
       const response = await fetch("/api/generate-email", {
         method: "POST",
@@ -55,7 +55,7 @@ export default function GenerateEmail() {
         },
       });
     } finally {
-      setIsLoading(false); // Stop loading
+      setIsLoading(false);
     }
   };
 

@@ -46,7 +46,6 @@ export async function POST(request) {
       savedUser,
     });
   } catch (error) {
-    // Handle errors
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
