@@ -14,7 +14,8 @@ export async function POST(request) {
     const { recipientName, emailPurpose, keyPoints } = await request.json();
 
     // Access cookies safely using Next.js API
-    const userId = await cookies().get("userId")?.value;
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
 
     if (!userId) {
       console.error("User ID is missing in the request.");
@@ -35,8 +36,8 @@ export async function POST(request) {
 
       fullname = loggedInUser.username;
       emailId = loggedInUser.email;
-      console.log("fullname: ", fullname);
-      console.log("emailId: ", emailId);
+      // console.log("fullname: ", fullname);
+      // console.log("emailId: ", emailId);
     } catch (error) {
       console.error("An error occurred while fetching the user:", error);
     }
@@ -67,7 +68,7 @@ export async function POST(request) {
       const email = chatCompletion.choices[0].message.content;
 
       const newResponse = new Response({
-        userId: request.userId,
+        userId: userId,
         recipientName: recipientName,
         purpose: emailPurpose,
         keyPoints: keyPoints,
