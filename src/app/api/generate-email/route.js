@@ -1,9 +1,7 @@
 import { connect } from "@/dbConfig/dbConfig";
 import Response from "@/models/responseModel";
 import { NextResponse } from "next/server";
-import { HfInference } from "@huggingface/inference";
 import { HuggingFaceInference } from "@langchain/community/llms/hf";
-//import { RunTree, Client } from "@langsmith/client"; // Import LangSmith
 import { cookies } from "next/headers";
 import User from "@/models/userModel";
 
@@ -46,86 +44,35 @@ export async function POST(request) {
       console.error("An error occurred while fetching the user:", error);
     }
 
+    const model = new HuggingFaceInference({
+      model: "Qwen/Qwen2.5-Coder-32B-Instruct",
+      apiKey: HUGGING_FACE_API_KEY,
+    });
+
+    const model2 = new HuggingFaceInference({
+      model: "Qwen/Qwen2.5-Coder-32B-Instruct",
+      apiKey: HUGGING_FACE_API_KEY,
+    });
     // Define the prompt for Qwen2.5-Coder model
     const prompt = `Write a professional, polite, conckse, short email for the purpose of ${emailPurpose}. Recipient: ${recipientName}. Key points to include: ${keyPoints}. If I have not provided full name then consider my full name: ${fullname}. If contact information not provided consider my contact information: ${emailId}`;
 
-    // Calling Hugging Face Inference API with Qwen2.5-Coder-32B-Instruct
+    const response = await model.invoke(prompt);
+    console.log("First Response: ", response);
 
-    // const client = new HfInference(HUGGING_FACE_API_KEY);
-    // const chatCompletion = await client.chatCompletion({
-    //   model: "Qwen/Qwen2.5-Coder-32B-Instruct",
-    //   messages: [
-    //     {
-    //       role: "user",
-    //       content: prompt,
-    //     },
-    //   ],
-    //   provider: "hf-inference",
-    //   max_tokens: 500,
+    const Prompt_2 = `I am giving you an AI response for an email. Extract the email from the response and provide it to me.`;
+    const email = await model2.invoke(Prompt_2);
+
+    console.log("Email: ", email);
+
+    // const newResponse = new Response({
+    //   userId: request.userId,
+    //   recipientName: recipientName,
+    //   purpose: emailPurpose,
+    //   keyPoints: keyPoints,
+    //   mail: email,
     // });
 
-    // if (
-    //   chatCompletion &&
-    //   chatCompletion.choices &&
-    //   chatCompletion.choices.length > 0
-    // ) {
-    //   //const email = chatCompletion.choices[0].message.content;
-
-    //   // const newResponse = new Response({
-    //   //   userId: request.userId,
-    //   //   recipientName: recipientName,
-    //   //   purpose: emailPurpose,
-    //   //   keyPoints: keyPoints,
-    //   //   mail: email,
-    //   // });
-
-    //  // const savedResponse = await newResponse.save();
-    //   return NextResponse.json({ email });
-    // } else {
-    //   throw new Error("Failed to generate email");
-    // }
-
-    // if (
-    //   res &&
-    //   res.choices &&
-    //   res.choices.length > 0
-    // ) {
-    //   const email = res.choices[0].message.content;
-
-    //   // const newResponse = new Response({
-    //   //   userId: request.userId,
-    //   //   recipientName: recipientName,
-    //   //   purpose: emailPurpose,
-    //   //   keyPoints: keyPoints,
-    //   //   mail: email,
-    //   // });
-
-    //  // const savedResponse = await newResponse.save();
-    //   return NextResponse.json({ email });
-    // } else {
-    //   throw new Error("Failed to generate email");
-    // }
-
-    // Integrating LangSmith is not possible in javascript in HfInference so I had to switch to HuggingFaceInference
-
-    const model = new HuggingFaceInference({
-      model: "Qwen/Qwen2.5-Coder-32B-Instruct",
-      apiKey: HUGGING_FACE_API_KEY, // In Node.js defaults to process.env.HUGGINGFACEHUB_API_KEY
-    });
-    const res = await model.invoke(prompt);
-    console.log({ res });
-
-    const email = res;
-
-    const newResponse = new Response({
-      userId: request.userId,
-      recipientName: recipientName,
-      purpose: emailPurpose,
-      keyPoints: keyPoints,
-      mail: email,
-    });
-
-    const savedResponse = await newResponse.save();
+    // const savedResponse = await newResponse.save();
     return NextResponse.json({ email });
   } catch (error) {
     console.error("Error:", error.message);
