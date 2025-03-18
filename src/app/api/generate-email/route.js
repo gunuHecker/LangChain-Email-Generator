@@ -1,87 +1,85 @@
 import { connect } from "@/dbConfig/dbConfig";
 import Response from "@/models/responseModel";
 import { NextResponse } from "next/server";
-import { HfInference } from "@huggingface/inference";
 import { cookies } from "next/headers";
 import User from "@/models/userModel";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
 
 connect();
 
-const HUGGING_FACE_API_KEY = process.env.HUGGING_FACE_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 export async function POST(request) {
   try {
     const { recipientName, emailPurpose, keyPoints } = await request.json();
 
-    // Access cookies safely using Next.js API
-    const userId = await cookies().get("userId")?.value;
-
+    // ✅ Properly await cookies retrieval
+    const userId = (await cookies()).get("userId")?.value;
     if (!userId) {
-      console.error("User ID is missing in the request.");
       return NextResponse.json(
-        { error: "Failed to get user Id" },
+        { error: "Failed to get user ID" },
         { status: 504 }
       );
     }
 
-    let fullname;
-    let emailId;
-    try {
-      const loggedInUser = await User.findById(userId);
-      if (!loggedInUser) {
-        console.error("No user found with the provided user ID.");
-        return;
-      }
-
-      fullname = loggedInUser.username;
-      emailId = loggedInUser.email;
-      console.log("fullname: ", fullname);
-      console.log("emailId: ", emailId);
-    } catch (error) {
-      console.error("An error occurred while fetching the user:", error);
+    // ✅ Fetch user details from database
+    const loggedInUser = await User.findById(userId);
+    if (!loggedInUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Define the prompt for Qwen2.5-Coder model
-    const prompt = `Write a professional, polite, conckse, short email for the purpose of ${emailPurpose}. Recipient: ${recipientName}. Key points to include: ${keyPoints}. If I have not provided full name then consider my full name: ${fullname}. If contact information not provided consider my contact information: ${emailId}`;
+    const fullname = loggedInUser.username;
+    const emailId = loggedInUser.email;
 
-    // Calling Hugging Face Inference API with Qwen2.5-Coder-32B-Instruct
+    // ✅ Structured prompt
+    const promptTemplate = ChatPromptTemplate.fromTemplate(
+      `Write a professional and polite email. 
+      - **Purpose**: {emailPurpose}  
+      - **Recipient**: {recipientName}  
+      - **Key Points**: {keyPoints}  
+      - **Sender Name (if missing)**: {fullname}  
+      - **Sender Contact (if missing)**: {emailId}  
+      Format the response as an email with a greeting, body, and closing.`
+    );
 
-    const client = new HfInference(HUGGING_FACE_API_KEY);
-    const chatCompletion = await client.chatCompletion({
-      model: "Qwen/Qwen2.5-Coder-32B-Instruct",
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      provider: "hf-inference",
-      max_tokens: 500,
+    const prompt = await promptTemplate.format({
+      emailPurpose,
+      recipientName,
+      keyPoints,
+      fullname,
+      emailId,
     });
 
-    if (
-      chatCompletion &&
-      chatCompletion.choices &&
-      chatCompletion.choices.length > 0
-    ) {
-      const email = chatCompletion.choices[0].message.content;
+    // ✅ Use LangChain to call Gemini API (Using `gemini-2.0-flash`)
+    const model = new ChatGoogleGenerativeAI({
+      modelName: "gemini-2.0-flash", // ✅ Use the faster model
+      apiKey: GEMINI_API_KEY,
+      maxOutputTokens: 500,
+      // apiVersion: "v1", // ✅ Ensure correct API version
+    });
 
-      const newResponse = new Response({
-        userId: request.userId,
-        recipientName: recipientName,
-        purpose: emailPurpose,
-        keyPoints: keyPoints,
-        mail: email,
-      });
+    const response = await model.invoke(prompt);
 
-      const savedResponse = await newResponse.save();
-
-      return NextResponse.json({ email });
-    } else {
-      throw new Error("Failed to generate email");
+    if (!response || !response.content) {
+      throw new Error("Failed to generate email.");
     }
-  }
-  catch (error) {
+
+    const email = response.content;
+
+    // ✅ Save to Database
+    const newResponse = new Response({
+      userId,
+      recipientName,
+      purpose: emailPurpose,
+      keyPoints,
+      mail: email,
+    });
+
+    await newResponse.save();
+
+    return NextResponse.json({ email });
+  } catch (error) {
     console.error("Error:", error.message);
     return NextResponse.json(
       { error: "Failed to generate email" },
